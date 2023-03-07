@@ -1,0 +1,7 @@
+dev:
+  APP_BUCKET_NAME: ntad-data
+  AGOL_URL: https://xentity.maps.arcgis.com
+  SECRETS_NAME: dev/ntad-agol
+  REGION: us-east-1
+  STAGE: dev
+  #ARCGIS_LAYER: arn:aws:lambda:${self:provider.region}:${aws:accountId}:layer:arcgis-layer:2

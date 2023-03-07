@@ -1,0 +1,4 @@
+python-dotenv
+cryptography==3.4.8
+arcgis
+boto3

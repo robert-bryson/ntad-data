@@ -2,33 +2,41 @@ org: rsmbryson
 app: ntad-db
 service: ntad-data
 frameworkVersion: '3'
-
-
+configValidationMode: error
+plugins:
+  - serverless-python-requirements
 provider:
   name: aws
   runtime: python3.9
-  stage: ${opt:stage, 'stg'}
-  stackName: ${self:provider.stage}-${self.service}
-  stackPolicy:
-    - Effect: Allow
-      Principal: "*"
-      Action: "Update:*"
-      Resource: "*"
-  iam:
-    role:
-      statements:
-        - Effect: Allow
-          Action:
-            - "s3:PutObject"
-            - "s3:GetObject"
-            - "secretsmanager:GetSecretValue"
-            - "lambda:InvokeFunction"
-          Resource: "*"
+  stage: ${opt:stage, 'dev'}
+  stackName: ${self:service}-${self:provider.stage}
 
+custom:
+  environment: ${file(./environment.yml):${self:provider.stage}}
+  pythonRequirements:
+    dockerizePip: true
 
 functions:
-  rateHandler:
+  pg2shp:
     handler: handler.run
     events:
-      # Invoke Lambda function every minute
       - schedule: rate(1 day)
+
+resources:
+  Resources:
+    UploadBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ntadbucket
+        AccessControl: PublicRead
+        CorsConfiguration:
+          CorsRules:
+          - AllowedMethods:
+            - GET
+            - PUT
+            - POST
+            - HEAD
+            AllowedOrigins:
+            - "*"
+            AllowedHeaders:
+            - "*"
