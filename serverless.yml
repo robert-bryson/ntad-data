@@ -21,6 +21,10 @@ functions:
     handler: handler.run
     events:
       - schedule: rate(1 day)
+    environment:
+      AGOL_URL: 'https://xentity.maps.arcgis.com/'
+      AGOL_USER: ${ssm:/agol-user~true}
+      AGOL_PASS: ${ssm:/agol-pass~true}
 
 resources:
   Resources:

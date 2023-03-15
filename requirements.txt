@@ -1,4 +1,12 @@
 python-dotenv
-cryptography==3.4.8
+cryptography
+ujson
+six
+requests
+requests-toolbelt
+requests-kerberos
+requests-oauthlib
+requests-gssapi
+requests_ntlm2
 arcgis
 boto3
