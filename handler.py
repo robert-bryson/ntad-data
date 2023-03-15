@@ -286,13 +286,34 @@ def agol2s3(gis, s3, event):
         print("uploaded shp to s3 bucket")
 
 
-def get_secrets() -> dict:
-    """
-    Retrieve username and password secrets for AGOL authentication
-    """
+def get_secrets():
+    '''
+    Retrieve username and password secret for
+    AGOL authentication from AWS Secrets Manager
+    '''
 
-    secrets = {}
-    secrets["AGOL_USER"] = os.environ.get("AGOL_USER")
-    secrets["AGOL_PASS"] = os.environ.get("AGOL_PASS")
+    secret_name = os.environ.get('AGOL_SECRET')
+    region_name = "us-east-1"
 
-    return secrets
+    # Create a Secrets Manager client
+    session = boto3.session.Session()
+    client = session.client(
+        service_name='secretsmanager',
+        region_name=region_name
+    )
+
+    try:
+        get_secret_value_response = client.get_secret_value(
+            SecretId=secret_name
+        )
+    except ClientError as e:
+        # For a list of exceptions thrown, see
+        # https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
+        raise e
+
+    # Decrypts secret using the associated KMS key.
+    secret = get_secret_value_response['SecretString']
+    secret_json = json.loads(secret)
+
+    return secret_json
+
